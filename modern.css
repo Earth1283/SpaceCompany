@@ -1,0 +1,236 @@
+/* Glassmorphism UI Overhaul - Space Company 2026 */
+
+/* --- Fonts & Global --- */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+:root {
+    --bg-dark: #0f1115;
+    --glass-bg: rgba(20, 25, 35, 0.65);
+    --glass-border: rgba(255, 255, 255, 0.08);
+    --glass-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+    --accent-color: #00d2ff;
+    --accent-glow: rgba(0, 210, 255, 0.3);
+    --text-main: #e0e6ed;
+    --text-muted: #94a3b8;
+    --panel-radius: 12px;
+}
+
+body {
+    font-family: 'Inter', system-ui, sans-serif !important;
+    background: radial-gradient(circle at 50% 10%, #1a1f35 0%, #0f1115 100%) !important;
+    color: var(--text-main) !important;
+    height: 100vh;
+    overflow: hidden;
+}
+
+/* --- Bootstrap Overrides --- */
+
+/* Navbar / Top Bar */
+.navbar {
+    background: rgba(15, 17, 21, 0.9) !important;
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid var(--glass-border) !important;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+}
+
+.navbar-brand {
+    color: var(--text-main) !important;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+}
+
+/* Tabs */
+.nav-tabs {
+    border-bottom: 2px solid var(--glass-border) !important;
+    padding-bottom: 0px;
+    margin-bottom: 20px;
+}
+
+.nav-tabs>li>a {
+    color: var(--text-muted) !important;
+    border: none !important;
+    border-bottom: 2px solid transparent !important;
+    background: transparent !important;
+    transition: all 0.3s ease;
+    padding: 12px 20px;
+    font-weight: 500;
+}
+
+.nav-tabs>li.active>a,
+.nav-tabs>li>a:hover {
+    color: var(--accent-color) !important;
+    border-bottom: 2px solid var(--accent-color) !important;
+    background: rgba(0, 210, 255, 0.05) !important;
+    text-shadow: 0 0 10px var(--accent-glow);
+}
+
+/* Panels */
+.panel {
+    background: var(--glass-bg) !important;
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid var(--glass-border) !important;
+    border-radius: var(--panel-radius) !important;
+    box-shadow: var(--glass-shadow);
+    margin-bottom: 20px;
+}
+
+.panel-heading {
+    background: rgba(255, 255, 255, 0.03) !important;
+    border-bottom: 1px solid var(--glass-border) !important;
+    color: var(--text-main) !important;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    font-size: 11px;
+    border-top-left-radius: var(--panel-radius) !important;
+    border-top-right-radius: var(--panel-radius) !important;
+}
+
+.panel-body {
+    padding: 20px;
+    color: var(--text-muted);
+}
+
+/* Buttons */
+.btn {
+    border-radius: 6px !important;
+    border: 1px solid var(--glass-border) !important;
+    transition: all 0.2s cubic-bezier(0.25, 0.8, 0.25, 1);
+    font-weight: 500;
+    letter-spacing: 0.3px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+}
+
+.btn-default {
+    background: rgba(255, 255, 255, 0.05) !important;
+    color: var(--text-main) !important;
+}
+
+.btn-default:hover {
+    background: rgba(255, 255, 255, 0.1) !important;
+    border-color: rgba(255, 255, 255, 0.2) !important;
+    transform: translateY(-1px);
+}
+
+.btn-primary {
+    background: linear-gradient(135deg, #3a7bd5 0%, #00d2ff 100%) !important;
+    border: none !important;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+}
+
+.btn-primary:hover {
+    box-shadow: 0 0 15px var(--accent-glow);
+    transform: translateY(-1px);
+}
+
+.btn-success {
+    background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%) !important;
+    border: none !important;
+}
+
+.btn-warning {
+    background: linear-gradient(135deg, #f2994a 0%, #f2c94c 100%) !important;
+    border: none !important;
+}
+
+.btn-danger {
+    background: linear-gradient(135deg, #cb2d3e 0%, #ef473a 100%) !important;
+    border: none !important;
+}
+
+.btn-info {
+    background: linear-gradient(135deg, #2193b0 0%, #6dd5ed 100%) !important;
+    border: none !important;
+}
+
+/* Tables */
+.table>tbody>tr>td {
+    vertical-align: middle;
+    border-top: 1px solid var(--glass-border) !important;
+}
+
+.table-hover>tbody>tr:hover {
+    background-color: rgba(255, 255, 255, 0.03) !important;
+}
+
+/* Inputs & Selects */
+.form-control {
+    background: rgba(0, 0, 0, 0.3) !important;
+    border: 1px solid var(--glass-border) !important;
+    color: var(--text-main) !important;
+    border-radius: 6px;
+    height: 40px;
+}
+
+.form-control:focus {
+    box-shadow: 0 0 0 2px var(--accent-glow);
+    border-color: var(--accent-color) !important;
+}
+
+/* Scrollbars */
+::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+}
+
+::-webkit-scrollbar-track {
+    background: rgba(0, 0, 0, 0.1);
+}
+
+::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: rgba(255, 255, 255, 0.3);
+}
+
+/* Specific Game Elements Overrides */
+#resourceNavParent tr.sideTab {
+    border-radius: 6px;
+    transition: background 0.2s;
+}
+
+#resourceNavParent tr.sideTab:hover {
+    background: rgba(255, 255, 255, 0.05);
+}
+
+#resourceNavParent tr.sideTab.info {
+    background: rgba(0, 210, 255, 0.1);
+    box-shadow: inset 2px 0 0 var(--accent-color);
+}
+
+/* Tooltips */
+.tooltip-inner {
+    background-color: var(--bg-dark) !important;
+    border: 1px solid var(--glass-border);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+    padding: 8px 12px;
+}
+
+.tooltip.top .tooltip-arrow {
+    border-top-color: var(--glass-border);
+}
+
+/* Progress Bars */
+.progress {
+    background-color: rgba(255, 255, 255, 0.1) !important;
+    border-radius: 10px;
+    height: 12px !important;
+}
+
+.progress-bar {
+    background-image: linear-gradient(90deg, #00d2ff, #3a7bd5) !important;
+    box-shadow: 0 0 10px var(--accent-glow);
+}
+
+/* Alerts / Notifications */
+.ui-pnotify-container {
+    background: rgba(20, 25, 35, 0.9) !important;
+    backdrop-filter: blur(10px) !important;
+    border: 1px solid var(--glass-border) !important;
+    color: var(--text-main) !important;
+    border-radius: 8px !important;
+}
