@@ -34,6 +34,18 @@ var CheatMenu = (function () {
             Game.notifySuccess('Cheated!', 'All technologies unlocked.');
         });
 
+        // Unlock Achievements
+        document.getElementById('btn-unlock-achievements').addEventListener('click', function () {
+            instance.unlockAllAchievements();
+            Game.notifySuccess('Cheated!', 'All achievements unlocked.');
+        });
+
+        // Unlock Wonders
+        document.getElementById('btn-unlock-wonders').addEventListener('click', function () {
+            instance.unlockAllWonders();
+            Game.notifySuccess('Cheated!', 'All wonders activated.');
+        });
+
         // Timewarp - Speed Slider
         var speedSlider = document.getElementById('speed-slider');
         var speedValue = document.getElementById('speed-value');
@@ -90,6 +102,109 @@ var CheatMenu = (function () {
             // Let's just ensure they are unlocked so they appear.
         }
         Game.techUI.refreshResearches(); // Refresh UI
+    };
+
+    instance.unlockAllAchievements = function () {
+        for (var id in Game.achievements.entries) {
+            var data = Game.achievements.entries[id];
+            if (data.brackets) {
+                Game.achievements.unlock(id, data.brackets.length - 1);
+            }
+        }
+    };
+
+    instance.unlockAllWonders = function () {
+        // We will mock resource checks to bypass costs
+        var originalGetResource = window.getResource;
+        var originalTakeResource = Game.resources.takeResource;
+
+        // Mock to return infinite resources
+        window.getResource = function () { return 1e100; };
+        // Mock to do nothing when taking resources
+        Game.resources.takeResource = function () { };
+
+        try {
+            // Level 1
+            if (typeof achievePreciousWonder === 'function') achievePreciousWonder();
+            if (typeof activatePreciousWonder === 'function') activatePreciousWonder();
+
+            if (typeof achieveEnergeticWonder === 'function') achieveEnergeticWonder();
+            if (typeof activateEnergeticWonder === 'function') activateEnergeticWonder();
+
+            if (typeof achieveTechWonder === 'function') achieveTechWonder();
+            if (typeof activateTechWonder === 'function') activateTechWonder();
+
+            if (typeof achieveMeteoriteWonder === 'function') achieveMeteoriteWonder();
+            if (typeof activateMeteoriteWonder === 'function') activateMeteoriteWonder();
+
+            // Level 2 (Rebuilds)
+            if (typeof rebuildCommsWonder === 'function') rebuildCommsWonder();
+            if (typeof rebuildRocketWonder === 'function') rebuildRocketWonder();
+            if (typeof rebuildAntimatterWonder === 'function') rebuildAntimatterWonder();
+
+            // Level 3
+            if (typeof activatePortal === 'function') activatePortal();
+            if (typeof rebuildStargate === 'function') rebuildStargate();
+
+        } catch (e) {
+            console.error("Error unlocking wonders:", e);
+        } finally {
+            // Restore
+            window.getResource = originalGetResource;
+            Game.resources.takeResource = originalTakeResource;
+        }
+        Game.techUI.refreshResearches(); // Refresh UI
+    };
+
+    instance.unlockAllAchievements = function () {
+        for (var id in Game.achievements.entries) {
+            var data = Game.achievements.entries[id];
+            if (data.brackets) {
+                Game.achievements.unlock(id, data.brackets.length - 1);
+            }
+        }
+    };
+
+    instance.unlockAllWonders = function () {
+        // We will mock resource checks to bypass costs
+        var originalGetResource = window.getResource;
+        var originalTakeResource = Game.resources.takeResource;
+
+        // Mock to return infinite resources
+        window.getResource = function () { return 1e100; };
+        // Mock to do nothing when taking resources
+        Game.resources.takeResource = function () { };
+
+        try {
+            // Level 1
+            if (typeof achievePreciousWonder === 'function') achievePreciousWonder();
+            if (typeof activatePreciousWonder === 'function') activatePreciousWonder();
+
+            if (typeof achieveEnergeticWonder === 'function') achieveEnergeticWonder();
+            if (typeof activateEnergeticWonder === 'function') activateEnergeticWonder();
+
+            if (typeof achieveTechWonder === 'function') achieveTechWonder();
+            if (typeof activateTechWonder === 'function') activateTechWonder();
+
+            if (typeof achieveMeteoriteWonder === 'function') achieveMeteoriteWonder();
+            if (typeof activateMeteoriteWonder === 'function') activateMeteoriteWonder();
+
+            // Level 2 (Rebuilds)
+            if (typeof rebuildCommsWonder === 'function') rebuildCommsWonder();
+            if (typeof rebuildRocketWonder === 'function') rebuildRocketWonder();
+            if (typeof rebuildAntimatterWonder === 'function') rebuildAntimatterWonder();
+
+            // Level 3
+            if (typeof activatePortal === 'function') activatePortal();
+            if (typeof rebuildStargate === 'function') rebuildStargate();
+
+        } catch (e) {
+            console.error("Error unlocking wonders:", e);
+        } finally {
+            // Restore
+            window.getResource = originalGetResource;
+            Game.resources.takeResource = originalTakeResource;
+        }
     };
 
     instance.timewarp = function (seconds) {
