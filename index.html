@@ -152,12 +152,111 @@
 					onclick="tabClicked('more')">
 					<div id="moreTabGlyph" class="glyphicon glyphicon-exclamation-sign hidden"></div> More...
 				</a></li>
+			<li role="presentation"><a href="#cheats" aria-controls="cheats" role="tab" data-toggle="tab">
+					<div class="glyphicon glyphicon-sunglasses"></div> Cheats
+				</a></li>
 		</ul>
 
 
 		<!-- Tab panes -->
 
 		<div class="tab-content" id="tabContent">
+			<!-- Cheats Tab -->
+			<div role="tabpanel" class="tab-pane fade" id="cheats">
+				<div class="container-fluid">
+					<div class="row">
+						<div class="col-md-6">
+							<div class="panel panel-info">
+								<div class="panel-heading">Resource Manager</div>
+								<div class="panel-body">
+									<p>Select a resource to modify its quantity, capacity, or production.</p>
+									<div class="form-group">
+										<label>Resource</label>
+										<select id="resource-select" class="form-control" style="color: black;">
+											<option value="">Select...</option>
+										</select>
+									</div>
+									<div class="form-group">
+										<label>Quantity</label>
+										<div class="input-group">
+											<input type="number" id="resource-quantity" class="form-control"
+												style="color: black;">
+											<span class="input-group-btn">
+												<button id="btn-set-quantity" class="btn btn-default"
+													type="button">Set</button>
+											</span>
+										</div>
+									</div>
+									<div class="form-group">
+										<label>Capacity Override</label>
+										<div class="input-group">
+											<input type="number" id="resource-capacity" class="form-control"
+												placeholder="Default" style="color: black;">
+											<span class="input-group-btn">
+												<button id="btn-set-capacity" class="btn btn-default"
+													type="button">Set</button>
+											</span>
+										</div>
+									</div>
+									<div class="form-group">
+										<label>Production Multiplier</label>
+										<div class="input-group">
+											<input type="number" id="resource-prod-mult" class="form-control" value="1"
+												step="0.1" style="color: black;">
+											<span class="input-group-btn">
+												<button id="btn-set-prod-mult" class="btn btn-default"
+													type="button">Set</button>
+											</span>
+										</div>
+									</div>
+								</div>
+							</div>
+
+							<div class="panel panel-warning">
+								<div class="panel-heading">Time Manipulation</div>
+								<div class="panel-body">
+									<div class="form-group">
+										<label>Game Speed: <span id="speed-value">1x</span></label>
+										<input type="range" id="speed-slider" min="0.1" max="100" step="0.1" value="1">
+									</div>
+									<div class="btn-group btn-group-justified">
+										<div class="btn-group">
+											<button id="btn-warp-1h" class="btn btn-warning">Warp 1 Hour</button>
+										</div>
+										<div class="btn-group">
+											<button id="btn-warp-1d" class="btn btn-warning">Warp 1 Day</button>
+										</div>
+									</div>
+									<br>
+									<div class="btn-group btn-group-justified">
+										<div class="btn-group">
+											<button id="btn-warp-1m" class="btn btn-warning">Warp 1 Month</button>
+										</div>
+										<div class="btn-group">
+											<button id="btn-warp-1y" class="btn btn-warning">Warp 1 Year</button>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+
+						<div class="col-md-6">
+							<div class="panel panel-success">
+								<div class="panel-heading">Progression</div>
+								<div class="panel-body">
+									<button id="btn-max-resources" class="btn btn-success btn-block">Maximize All
+										Resources</button>
+									<button id="btn-unlock-tech" class="btn btn-info btn-block">Unlock All Tech</button>
+									<button id="btn-unlock-achievements" class="btn btn-primary btn-block">Unlock
+										Achievements</button>
+									<button id="btn-unlock-wonders" class="btn btn-warning btn-block">Unlock
+										Wonders</button>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
 			<!-- Resources -->
 			<div role="tabpanel" class="tab-pane fade in active" id="resources">
 				<div class="container col-xs-1" style="width:380px; padding:0; float:left;">
@@ -8418,83 +8517,6 @@
 
 	<!-- Cheat Menu -->
 	<link href="cheat.css" rel="stylesheet">
-	<div id="cheat-menu-container">
-		<div id="cheat-panel">
-			<div class="cheat-header">
-				<h3>ANTIGRAVITY MOD</h3>
-				<div style="font-size: 10px; opacity: 0.7;">v1.0</div>
-			</div>
-
-			<div class="cheat-section">
-				<h4>Resources</h4>
-				<button id="btn-max-resources" class="cheat-btn">
-					<div class="glyphicon glyphicon-plus"></div> Maximize All
-				</button>
-			</div>
-
-			<div class="cheat-section">
-				<h4>Progression</h4>
-				<button id="btn-unlock-tech" class="cheat-btn">
-					<div class="glyphicon glyphicon-education"></div> Unlock All Tech
-				</button>
-				<button id="btn-unlock-achievements" class="cheat-btn">
-					<div class="glyphicon glyphicon-trophy"></div> Unlock Achievements
-				</button>
-				<button id="btn-unlock-wonders" class="cheat-btn">
-					<div class="glyphicon glyphicon-star"></div> Unlock Wonders
-				</button>
-			</div>
-
-			<div class="cheat-section">
-				<h4>Resource Manager</h4>
-				<div class="cheat-control-group">
-					<label>Resource</label>
-					<select id="resource-select" class="cheat-select">
-						<option value="">Select...</option>
-					</select>
-				</div>
-				<div class="cheat-control-group">
-					<label>Qty</label>
-					<input type="number" id="resource-quantity" class="cheat-input">
-					<button id="btn-set-quantity" class="cheat-btn-small">Set</button>
-				</div>
-				<div class="cheat-control-group">
-					<label>Cap</label>
-					<input type="number" id="resource-capacity" class="cheat-input" placeholder="Default">
-					<button id="btn-set-capacity" class="cheat-btn-small">Set</button>
-				</div>
-				<div class="cheat-control-group">
-					<label>Prod X</label>
-					<input type="number" id="resource-prod-mult" class="cheat-input" value="1" step="0.1">
-					<button id="btn-set-prod-mult" class="cheat-btn-small">Set</button>
-				</div>
-			</div>
-
-			<div class="cheat-section">
-				<h4>Time Manipulation</h4>
-				<div class="cheat-control-group">
-					<label>Game Speed</label>
-					<input type="range" id="speed-slider" class="cheat-slider" min="0.1" max="100" step="0.1" value="1">
-					<div id="speed-value" class="cheat-value-display">1x</div>
-				</div>
-				<button id="btn-warp-1h" class="cheat-btn">
-					<div class="glyphicon glyphicon-fast-forward"></div> Warp 1 Hour
-				</button>
-				<button id="btn-warp-1d" class="cheat-btn">
-					<div class="glyphicon glyphicon-forward"></div> Warp 1 Day
-				</button>
-				<button id="btn-warp-1m" class="cheat-btn">
-					<div class="glyphicon glyphicon-fast-forward"></div> Warp 1 Month
-				</button>
-				<button id="btn-warp-1y" class="cheat-btn">
-					<div class="glyphicon glyphicon-plane"></div> Warp 1 Year
-				</button>
-			</div>
-		</div>
-		<div id="cheat-toggle-btn">
-			<div class="glyphicon glyphicon-cog"></div>
-		</div>
-	</div>
 	<script src="cheat.js"></script>
 </body>
 

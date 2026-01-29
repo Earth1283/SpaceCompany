@@ -6,22 +6,14 @@ var CheatMenu = (function () {
     instance.speedMultiplier = 1.0;
     instance.resourceOverrides = {}; // { id: { capacity: number, productionMult: number } }
 
-    // Initialize
     instance.init = function () {
-        console.log("Cheat Menu Initialized");
+        console.log("Cheat Menu Initialized (Native Tab)");
         this.bindEvents();
         this.monkeyPatchGameLoop();
         this.populateResourceDropdown();
     };
 
-    // DOM Events
     instance.bindEvents = function () {
-        // Toggle button
-        document.getElementById('cheat-toggle-btn').addEventListener('click', function () {
-            var panel = document.getElementById('cheat-panel');
-            panel.classList.toggle('visible');
-        });
-
         // Max Resources
         document.getElementById('btn-max-resources').addEventListener('click', function () {
             instance.maximizeResources();
@@ -36,14 +28,12 @@ var CheatMenu = (function () {
 
         // Unlock Achievements
         document.getElementById('btn-unlock-achievements').addEventListener('click', function () {
-            console.log("Unlock Achievements clicked");
             instance.unlockAllAchievements();
             Game.notifySuccess('Cheated!', 'All achievements unlocked.');
         });
 
         // Unlock Wonders
         document.getElementById('btn-unlock-wonders').addEventListener('click', function () {
-            console.log("Unlock Wonders clicked");
             instance.unlockAllWonders();
             Game.notifySuccess('Cheated!', 'All wonders activated.');
         });
@@ -90,19 +80,32 @@ var CheatMenu = (function () {
             if (!resId) return;
 
             // Populate inputs
-            quantityInput.value = Math.floor(Game.resources.getResource(resId));
+            if (resId === 'antimatter') {
+                quantityInput.value = Math.floor(window.antimatter || 0);
+                capacityInput.value = window.antimatterStorage || 0;
+                prodMultInput.value = 1; // Production mult not easily supported for globals
 
-            // Check for overrides
-            if (instance.resourceOverrides[resId] && instance.resourceOverrides[resId].capacity) {
-                capacityInput.value = instance.resourceOverrides[resId].capacity;
-            } else {
-                capacityInput.value = Game.resources.getStorage(resId);
-            }
-
-            if (instance.resourceOverrides[resId] && instance.resourceOverrides[resId].productionMult) {
-                prodMultInput.value = instance.resourceOverrides[resId].productionMult;
-            } else {
+            } else if (resId === 'rocketFuel') {
+                quantityInput.value = Math.floor(window.rocketFuel || 0);
+                capacityInput.value = "∞"; // No storage cap var found
                 prodMultInput.value = 1;
+
+            } else {
+                // Standard Resource
+                quantityInput.value = Math.floor(Game.resources.getResource(resId));
+
+                // Check for overrides
+                if (instance.resourceOverrides[resId] && instance.resourceOverrides[resId].capacity) {
+                    capacityInput.value = instance.resourceOverrides[resId].capacity;
+                } else {
+                    capacityInput.value = Game.resources.getStorage(resId);
+                }
+
+                if (instance.resourceOverrides[resId] && instance.resourceOverrides[resId].productionMult) {
+                    prodMultInput.value = instance.resourceOverrides[resId].productionMult;
+                } else {
+                    prodMultInput.value = 1;
+                }
             }
         });
 
@@ -112,14 +115,22 @@ var CheatMenu = (function () {
             var val = parseFloat(quantityInput.value);
             if (isNaN(val)) return;
 
-            var current = Game.resources.getResource(resId);
-            var diff = val - current;
-            if (diff > 0) {
-                Game.resources.addResource(resId, diff);
-            } else if (diff < 0) {
-                Game.resources.takeResource(resId, -diff);
+            if (resId === 'antimatter') {
+                window.antimatter = val;
+                Game.notifySuccess('Resource Updated', 'Antimatter set to ' + val);
+            } else if (resId === 'rocketFuel') {
+                window.rocketFuel = val;
+                Game.notifySuccess('Resource Updated', 'Rocket Fuel set to ' + val);
+            } else {
+                var current = Game.resources.getResource(resId);
+                var diff = val - current;
+                if (diff > 0) {
+                    Game.resources.addResource(resId, diff);
+                } else if (diff < 0) {
+                    Game.resources.takeResource(resId, -diff);
+                }
+                Game.notifySuccess('Resource Updated', 'Quantity set to ' + val);
             }
-            Game.notifySuccess('Resource Updated', 'Quantity set to ' + val);
         });
 
         document.getElementById('btn-set-capacity').addEventListener('click', function () {
@@ -127,15 +138,24 @@ var CheatMenu = (function () {
             if (!resId) return;
             var val = parseFloat(capacityInput.value);
 
-            if (!instance.resourceOverrides[resId]) instance.resourceOverrides[resId] = {};
-
-            if (isNaN(val) || val <= 0) {
-                // Reset to default
-                delete instance.resourceOverrides[resId].capacity;
-                Game.notifySuccess('Resource Updated', 'Capacity reset to default');
+            if (resId === 'antimatter') {
+                if (!isNaN(val)) {
+                    window.antimatterStorage = val;
+                    Game.notifySuccess('Resource Updated', 'Antimatter Capacity set to ' + val);
+                }
+            } else if (resId === 'rocketFuel') {
+                // No storage var to update
+                Game.notifyInfo('Info', 'Rocket Fuel capacity cannot be changed directly.');
             } else {
-                instance.resourceOverrides[resId].capacity = val;
-                Game.notifySuccess('Resource Updated', 'Capacity override set to ' + val);
+                if (!instance.resourceOverrides[resId]) instance.resourceOverrides[resId] = {};
+
+                if (isNaN(val) || val <= 0) {
+                    delete instance.resourceOverrides[resId].capacity;
+                    Game.notifySuccess('Resource Updated', 'Capacity reset to default');
+                } else {
+                    instance.resourceOverrides[resId].capacity = val;
+                    Game.notifySuccess('Resource Updated', 'Capacity override set to ' + val);
+                }
             }
         });
 
@@ -143,6 +163,11 @@ var CheatMenu = (function () {
             var resId = resourceSelect.value;
             if (!resId) return;
             var val = parseFloat(prodMultInput.value);
+
+            if (resId === 'antimatter' || resId === 'rocketFuel') {
+                Game.notifyInfo('Info', 'Production multipliers for this resource are not supported yet.');
+                return;
+            }
 
             if (!instance.resourceOverrides[resId]) instance.resourceOverrides[resId] = {};
 
@@ -158,7 +183,7 @@ var CheatMenu = (function () {
 
     instance.populateResourceDropdown = function () {
         var select = document.getElementById('resource-select');
-        // Sort resources alphabetically for easier finding
+        // Standard Resources
         var sortedResources = [];
         for (var id in Game.resources.entries) {
             sortedResources.push({ id: id, name: Game.resources.entries[id].name });
@@ -173,9 +198,24 @@ var CheatMenu = (function () {
             option.textContent = res.name;
             select.appendChild(option);
         });
+
+        // Special Resources
+        var group = document.createElement('optgroup');
+        group.label = "Special";
+
+        var antimatterOpt = document.createElement('option');
+        antimatterOpt.value = 'antimatter';
+        antimatterOpt.textContent = 'Antimatter';
+        group.appendChild(antimatterOpt);
+
+        var fuelOpt = document.createElement('option');
+        fuelOpt.value = 'rocketFuel';
+        fuelOpt.textContent = 'Rocket Fuel';
+        group.appendChild(fuelOpt);
+
+        select.appendChild(group);
     };
 
-    // Logic Functions
     instance.maximizeResources = function () {
         for (var id in RESOURCE) {
             var resId = RESOURCE[id];
@@ -197,7 +237,7 @@ var CheatMenu = (function () {
                 tech.unlocked = true;
             }
         }
-        Game.techUI.refreshResearches(); // Refresh UI
+        Game.techUI.refreshResearches();
     };
 
     instance.unlockAllAchievements = function () {
@@ -210,16 +250,12 @@ var CheatMenu = (function () {
     };
 
     instance.unlockAllWonders = function () {
-        // We will mock resource checks to bypass costs
         var originalGetResource = window.getResource;
         var originalTakeResource = Game.resources.takeResource;
 
-        // Mock to return infinite resources
         window.getResource = function () { return 1e100; };
-        // Mock to do nothing when taking resources
         Game.resources.takeResource = function () { };
 
-        // Ensure interstellar data exists to prevent crashes
         if (Game.interstellar && Game.interstellar.entries) {
             var keys = ['comms', 'rocket', 'antimatter', 'stargate'];
             for (var i = 0; i < keys.length; i++) {
@@ -257,23 +293,19 @@ var CheatMenu = (function () {
             console.error("Error unlocking wonders:", e);
             alert("Error unlocking wonders: " + e.message);
         } finally {
-            // Restore
             window.getResource = originalGetResource;
             Game.resources.takeResource = originalTakeResource;
         }
-        Game.techUI.refreshResearches(); // Refresh UI
+        Game.techUI.refreshResearches();
     };
 
     instance.timewarp = function (seconds) {
-        // Warp time by simulating gains
         refreshPerSec(1);
         gainResources(seconds);
         fixStorageRounding();
-        // Also update timeplayed
         Game.statistics.add('timePlayed', seconds);
     };
 
-    // Monkey Patching for Speed Hack & Resource Overrides
     instance.monkeyPatchGameLoop = function () {
         var originalUpdate = Game.update;
         Game.update = function (delta) {
@@ -294,7 +326,6 @@ var CheatMenu = (function () {
             fixStorageRounding();
         };
 
-        // Resource Overrides
         var originalGetStorage = Game.resources.getStorage;
         Game.resources.getStorage = function (id) {
             if (instance.resourceOverrides[id] && instance.resourceOverrides[id].capacity !== undefined) {
@@ -302,8 +333,6 @@ var CheatMenu = (function () {
             }
             return originalGetStorage.apply(this, arguments);
         };
-
-        // Note: global getStorage wrapper calls Game.resources.getStorage, so this patch covers both.
 
         var originalGetProduction = Game.resources.getProduction;
         Game.resources.getProduction = function (id) {
