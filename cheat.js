@@ -123,6 +123,17 @@ var CheatMenu = (function () {
         // Mock to do nothing when taking resources
         Game.resources.takeResource = function () { };
 
+        // Ensure interstellar data exists to prevent crashes
+        if (Game.interstellar && Game.interstellar.entries) {
+            var keys = ['comms', 'rocket', 'antimatter', 'stargate'];
+            for (var i = 0; i < keys.length; i++) {
+                var key = keys[i];
+                if (!Game.interstellar.entries[key]) {
+                    Game.interstellar.entries[key] = { unlocked: false, displayNeedsUpdate: false };
+                }
+            }
+        }
+
         try {
             // Level 1
             if (typeof achievePreciousWonder === 'function') achievePreciousWonder();
