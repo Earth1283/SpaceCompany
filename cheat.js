@@ -126,10 +126,37 @@ var CheatMenu = (function () {
                 var diff = val - current;
                 if (diff > 0) {
                     Game.resources.addResource(resId, diff);
-                } else if (diff < 0) {
                     Game.resources.takeResource(resId, -diff);
                 }
                 Game.notifySuccess('Resource Updated', 'Quantity set to ' + val);
+            }
+        });
+
+        document.getElementById('btn-multiply-quantity').addEventListener('click', function (e) {
+            var resId = resourceSelect.value;
+            if (!resId) return;
+
+            var multiplier = e.shiftKey ? 512 : 2;
+            var currentVal = 0;
+
+            if (resId === 'antimatter') {
+                currentVal = window.antimatter || 0;
+                window.antimatter = currentVal * multiplier;
+                quantityInput.value = window.antimatter;
+                Game.notifySuccess('Resource Multiplied', 'Antimatter x' + multiplier);
+            } else if (resId === 'rocketFuel') {
+                currentVal = window.rocketFuel || 0;
+                window.rocketFuel = currentVal * multiplier;
+                quantityInput.value = window.rocketFuel;
+                Game.notifySuccess('Resource Multiplied', 'Rocket Fuel x' + multiplier);
+            } else {
+                currentVal = Game.resources.getResource(resId);
+                var newVal = currentVal * multiplier;
+                var diff = newVal - currentVal;
+
+                Game.resources.addResource(resId, diff);
+                quantityInput.value = Math.floor(newVal);
+                Game.notifySuccess('Resource Multiplied', 'Quantity x' + multiplier);
             }
         });
 
@@ -178,6 +205,23 @@ var CheatMenu = (function () {
                 instance.resourceOverrides[resId].productionMult = val;
                 Game.notifySuccess('Resource Updated', 'Production multiplier set to ' + val + 'x');
             }
+        });
+
+        // Advanced Hacks
+        document.getElementById('btn-instant-explore').addEventListener('click', function () {
+            instance.instantExplore();
+        });
+
+        document.getElementById('btn-complete-dyson').addEventListener('click', function () {
+            instance.completeDysonSphere();
+        });
+
+        document.getElementById('btn-build-10').addEventListener('click', function () {
+            instance.infrastructureBoost(10);
+        });
+
+        document.getElementById('btn-build-100').addEventListener('click', function () {
+            instance.infrastructureBoost(100);
         });
     };
 
