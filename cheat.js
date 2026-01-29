@@ -4,12 +4,14 @@ var CheatMenu = (function () {
 
     // Config
     instance.speedMultiplier = 1.0;
+    instance.resourceOverrides = {}; // { id: { capacity: number, productionMult: number } }
 
     // Initialize
     instance.init = function () {
         console.log("Cheat Menu Initialized");
         this.bindEvents();
         this.monkeyPatchGameLoop();
+        this.populateResourceDropdown();
     };
 
     // DOM Events
@@ -18,7 +20,6 @@ var CheatMenu = (function () {
         document.getElementById('cheat-toggle-btn').addEventListener('click', function () {
             var panel = document.getElementById('cheat-panel');
             panel.classList.toggle('visible');
-            var icon = this.querySelector('div');
         });
 
         // Max Resources
@@ -76,6 +77,101 @@ var CheatMenu = (function () {
         document.getElementById('btn-warp-1y').addEventListener('click', function () {
             instance.timewarp(31536000); // 365 days
             Game.notifySuccess('Time Warp', 'Jumped forward 1 year.');
+        });
+
+        // Resource Manager Handlers
+        var resourceSelect = document.getElementById('resource-select');
+        var quantityInput = document.getElementById('resource-quantity');
+        var capacityInput = document.getElementById('resource-capacity');
+        var prodMultInput = document.getElementById('resource-prod-mult');
+
+        resourceSelect.addEventListener('change', function () {
+            var resId = this.value;
+            if (!resId) return;
+
+            // Populate inputs
+            quantityInput.value = Math.floor(Game.resources.getResource(resId));
+
+            // Check for overrides
+            if (instance.resourceOverrides[resId] && instance.resourceOverrides[resId].capacity) {
+                capacityInput.value = instance.resourceOverrides[resId].capacity;
+            } else {
+                capacityInput.value = Game.resources.getStorage(resId);
+            }
+
+            if (instance.resourceOverrides[resId] && instance.resourceOverrides[resId].productionMult) {
+                prodMultInput.value = instance.resourceOverrides[resId].productionMult;
+            } else {
+                prodMultInput.value = 1;
+            }
+        });
+
+        document.getElementById('btn-set-quantity').addEventListener('click', function () {
+            var resId = resourceSelect.value;
+            if (!resId) return;
+            var val = parseFloat(quantityInput.value);
+            if (isNaN(val)) return;
+
+            var current = Game.resources.getResource(resId);
+            var diff = val - current;
+            if (diff > 0) {
+                Game.resources.addResource(resId, diff);
+            } else if (diff < 0) {
+                Game.resources.takeResource(resId, -diff);
+            }
+            Game.notifySuccess('Resource Updated', 'Quantity set to ' + val);
+        });
+
+        document.getElementById('btn-set-capacity').addEventListener('click', function () {
+            var resId = resourceSelect.value;
+            if (!resId) return;
+            var val = parseFloat(capacityInput.value);
+
+            if (!instance.resourceOverrides[resId]) instance.resourceOverrides[resId] = {};
+
+            if (isNaN(val) || val <= 0) {
+                // Reset to default
+                delete instance.resourceOverrides[resId].capacity;
+                Game.notifySuccess('Resource Updated', 'Capacity reset to default');
+            } else {
+                instance.resourceOverrides[resId].capacity = val;
+                Game.notifySuccess('Resource Updated', 'Capacity override set to ' + val);
+            }
+        });
+
+        document.getElementById('btn-set-prod-mult').addEventListener('click', function () {
+            var resId = resourceSelect.value;
+            if (!resId) return;
+            var val = parseFloat(prodMultInput.value);
+
+            if (!instance.resourceOverrides[resId]) instance.resourceOverrides[resId] = {};
+
+            if (isNaN(val)) {
+                instance.resourceOverrides[resId].productionMult = 1;
+                Game.notifySuccess('Resource Updated', 'Production multiplier reset');
+            } else {
+                instance.resourceOverrides[resId].productionMult = val;
+                Game.notifySuccess('Resource Updated', 'Production multiplier set to ' + val + 'x');
+            }
+        });
+    };
+
+    instance.populateResourceDropdown = function () {
+        var select = document.getElementById('resource-select');
+        // Sort resources alphabetically for easier finding
+        var sortedResources = [];
+        for (var id in Game.resources.entries) {
+            sortedResources.push({ id: id, name: Game.resources.entries[id].name });
+        }
+        sortedResources.sort(function (a, b) {
+            return a.name.localeCompare(b.name);
+        });
+
+        sortedResources.forEach(function (res) {
+            var option = document.createElement('option');
+            option.value = res.id;
+            option.textContent = res.name;
+            select.appendChild(option);
         });
     };
 
@@ -177,7 +273,7 @@ var CheatMenu = (function () {
         Game.statistics.add('timePlayed', seconds);
     };
 
-    // Monkey Patching for Speed Hack
+    // Monkey Patching for Speed Hack & Resource Overrides
     instance.monkeyPatchGameLoop = function () {
         var originalUpdate = Game.update;
         Game.update = function (delta) {
@@ -198,8 +294,25 @@ var CheatMenu = (function () {
             fixStorageRounding();
         };
 
-        // Ensure UI updates also respect speed? 
-        // originalUpdate handles UI updates in Space Company usually.
+        // Resource Overrides
+        var originalGetStorage = Game.resources.getStorage;
+        Game.resources.getStorage = function (id) {
+            if (instance.resourceOverrides[id] && instance.resourceOverrides[id].capacity !== undefined) {
+                return instance.resourceOverrides[id].capacity;
+            }
+            return originalGetStorage.apply(this, arguments);
+        };
+
+        // Note: global getStorage wrapper calls Game.resources.getStorage, so this patch covers both.
+
+        var originalGetProduction = Game.resources.getProduction;
+        Game.resources.getProduction = function (id) {
+            var val = originalGetProduction.apply(this, arguments);
+            if (instance.resourceOverrides[id] && instance.resourceOverrides[id].productionMult !== undefined) {
+                return val * instance.resourceOverrides[id].productionMult;
+            }
+            return val;
+        };
     };
 
     return instance;
