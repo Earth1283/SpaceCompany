@@ -19,8 +19,8 @@ body {
     font-family: 'Inter', system-ui, sans-serif !important;
     background: radial-gradient(circle at 50% 10%, #1a1f35 0%, #0f1115 100%) !important;
     color: var(--text-main) !important;
-    height: 100vh;
-    overflow: hidden;
+    min-height: 100vh;
+    overflow-y: auto;
 }
 
 /* --- Bootstrap Overrides --- */
