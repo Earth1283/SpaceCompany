@@ -1,0 +1,169 @@
+/* Cheat Menu Container */
+#cheat-menu-container {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    z-index: 10000;
+    font-family: 'Orbitron', 'sans-serif';
+    color: white;
+}
+
+/* Toggle Button */
+#cheat-toggle-btn {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+    transition: all 0.3s ease;
+}
+
+#cheat-toggle-btn:hover {
+    background: rgba(255, 255, 255, 0.2);
+    transform: scale(1.1);
+}
+
+/* Cheat Panel */
+#cheat-panel {
+    position: absolute;
+    bottom: 70px;
+    right: 0;
+    width: 300px;
+    background: rgba(40, 44, 52, 0.85);
+    /* Darker background for readability */
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 16px;
+    padding: 20px;
+    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+    transform-origin: bottom right;
+    transition: all 0.3s cubic-bezier(0.4, 0.0, 0.2, 1);
+    opacity: 0;
+    transform: scale(0.8) translateY(20px);
+    pointer-events: none;
+    max-height: 80vh;
+    overflow-y: auto;
+}
+
+#cheat-panel.visible {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+    pointer-events: all;
+}
+
+/* Panel Header */
+.cheat-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    padding-bottom: 10px;
+}
+
+.cheat-header h3 {
+    margin: 0;
+    font-size: 18px;
+    background: linear-gradient(90deg, #00d2ff 0%, #3a7bd5 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+/* Cheat Sections */
+.cheat-section {
+    margin-bottom: 20px;
+}
+
+.cheat-section h4 {
+    font-size: 14px;
+    color: rgba(255, 255, 255, 0.7);
+    margin-bottom: 10px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+/* Buttons */
+.cheat-btn {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 8px;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 8px;
+    color: white;
+    cursor: pointer;
+    font-family: inherit;
+    transition: all 0.2s;
+    text-align: left;
+    display: flex;
+    align-items: center;
+}
+
+.cheat-btn:hover {
+    background: rgba(255, 255, 255, 0.15);
+    border-color: rgba(255, 255, 255, 0.3);
+}
+
+.cheat-btn:active {
+    transform: scale(0.98);
+}
+
+.cheat-btn i {
+    margin-right: 10px;
+}
+
+/* Inputs / Sliders */
+.cheat-control-group {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+    background: rgba(0, 0, 0, 0.2);
+    padding: 8px;
+    border-radius: 8px;
+}
+
+.cheat-control-group label {
+    flex: 1;
+    font-size: 12px;
+}
+
+.cheat-slider {
+    flex: 2;
+    margin: 0 10px;
+    accent-color: #00d2ff;
+}
+
+.cheat-value-display {
+    width: 40px;
+    text-align: right;
+    font-size: 12px;
+    color: #00d2ff;
+}
+
+/* Scrollbar */
+#cheat-panel::-webkit-scrollbar {
+    width: 6px;
+}
+
+#cheat-panel::-webkit-scrollbar-track {
+    background: rgba(0, 0, 0, 0.1);
+}
+
+#cheat-panel::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 3px;
+}
+
+#cheat-panel::-webkit-scrollbar-thumb:hover {
+    background: rgba(255, 255, 255, 0.4);
+}
