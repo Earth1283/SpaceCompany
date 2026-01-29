@@ -68,6 +68,16 @@ var CheatMenu = (function () {
             instance.timewarp(86400);
             Game.notifySuccess('Time Warp', 'Jumped forward 1 day.');
         });
+
+        document.getElementById('btn-warp-1m').addEventListener('click', function () {
+            instance.timewarp(2592000); // 30 days
+            Game.notifySuccess('Time Warp', 'Jumped forward 1 month.');
+        });
+
+        document.getElementById('btn-warp-1y').addEventListener('click', function () {
+            instance.timewarp(31536000); // 365 days
+            Game.notifySuccess('Time Warp', 'Jumped forward 1 year.');
+        });
     };
 
     // Logic Functions
